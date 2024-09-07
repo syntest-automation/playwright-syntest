@@ -178,7 +178,7 @@ test.describe('Item', () => {
     const secondTodo = todoItems.nth(1);
     await secondTodo.dblclick();
     await expect(secondTodo.getByRole('textbox', { name: 'Edit' })).toHaveValue(TODO_ITEMS[1]);
-    await secondTodo.getByRole('textbox', { name: 'E3dit' }).fill('buy some sausages');
+    await secondTodo.getByRole('textbox', { name: 'Edit' }).fill('buy some sausages');
     await secondTodo.getByRole('textbox', { name: 'Edit' }).press('Enter');
 
     // Explicitly assert the new text value.
