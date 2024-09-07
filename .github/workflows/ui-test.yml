@@ -1,0 +1,89 @@
+name: UI Tests
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  GH_PAT: ${{ secrets.GITHUB_TOKEN }}
+  CACHE_KEY: "regression"
+
+jobs:
+  prepare-cache:
+    name: Prepare Cache
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.1.7
+        with:
+          persist-credentials: false
+
+      - name: Set Environment Variables
+        uses: ./.github/actions/setvars
+        with:
+          varFilePath: ./.github/variables/node.env
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4.0.1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "yarn"
+
+      - name: Check if node modules are cached
+        id: cache
+        uses: actions/cache@v4.0.2
+        with:
+          path: ./node_modules
+          key: ${{ env.CACHE_KEY }}-node-modules-${{ hashFiles('**/yarn.lock') }}
+          lookup-only: true
+
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile
+
+  test:
+    name: Regression test
+    needs: [prepare-cache]
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4.1.7
+        with:
+          persist-credentials: false
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4.0.1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "yarn"
+
+      - name: Restore node_modules cache
+        id: cache
+        uses: actions/cache/restore@v4.0.2
+        with:
+          path: ./node_modules
+          key: ${{ env.CACHE_KEY }}-node-modules-${{ hashFiles('**/yarn.lock') }}
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps ${{ env.BROWSER }}
+
+      - name: Run Regression Tests on PR
+        if: ${{ github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' }}
+        working-directory: tests
+        run: npx playwright test --project=${{ env.BROWSER }}
+
+      - name: Upload HTML report
+        if: ${{ always()}}
+        uses: actions/upload-artifact@v4.3.4
+        with:
+          name: "Regression Tests Report (Attempt #${{ github.run_attempt }})"
+          path: playwright-report
+          retention-days: 7
+          if-no-files-found: ignore # 'warn' or 'ignore' are also available, defaults to `warn`
+
