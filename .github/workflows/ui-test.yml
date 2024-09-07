@@ -13,6 +13,7 @@ concurrency:
 env:
   GH_PAT: ${{ secrets.GITHUB_TOKEN }}
   CACHE_KEY: "regression"
+  BROWSER: "chromium"
 
 jobs:
   prepare-cache:
@@ -77,6 +78,11 @@ jobs:
         if: ${{ github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' }}
         working-directory: tests
         run: npx playwright test --project=${{ env.BROWSER }}
+
+      - name: Get Report Folder
+        run: |
+          ls -la
+        working-directory: .
 
       - name: Upload HTML report
         if: ${{ always()}}
