@@ -1,0 +1,36 @@
+# Application dependencies
+node_modules
+
+# Application build
+dist/
+build/
+# MacOS X
+.DS_Store
+
+# Idea IDE
+.idea
+.vscode
+.yalc
+.env
+coverage/
+yalc.lock
+
+# Local .env file
+.env
+
+# if someone have local history extension
+.history
+yarn-error.log
+
+# playwright test reports and cache
+test-report/
+test-results/
+playwright-report/
+playwright/.cache/
+src/types/resources.d.ts
+test/test-report.xml
+
+.npmrc
+
+./src/types/resources.d.ts
+unit-test/test-reporter.xml
