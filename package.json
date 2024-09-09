@@ -1,10 +1,41 @@
 {
-  "name": "new-project",
+  "name": "playwright-syntest",
   "version": "1.0.0",
-  "description": "",
+  "description": "Software test automation | Playwright + Typescript",
   "main": "index.js",
-  "scripts": {},
-  "keywords": [],
+  "directories": {
+    "doc": "docs"
+  },
+  "type": "module",
+  "scripts": {
+    "lint": "eslint . --fix --max-warnings=0",
+    "prettier": "prettier . --write",
+    "prepare": "husky install",
+    "tests:chromium": "npx playwright test --config=playwright.config.ts --project=chromium",
+    "tests:firefox": "npx playwright test --config=playwright.config.ts --project=firefox",
+    "tests:webkit": "npx playwright test --config=playwright.config.ts --project=webkit",
+    "tests:visual": "npx playwright test --config=visual.config.ts --project=chromium",
+    "tests:pdf": "npx playwright test --config=pdf.config.ts --project=chromium",
+    "tests:api": "npx playwright test --config=api.config.ts --project=chromium",
+    "tests:audit": "npx playwright test lighthouse.spec.ts --config=lighthouse.config.ts --project=chromium",
+    "lighthouse": "node tests/lighthouse/lighthouse.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:syntest-automation/playwright-syntest.git"
+  },
+  "keywords": [
+    "tests",
+    "automation",
+    "playwright"
+  ],
+  "bugs": {
+    "url": "https://github.com/syntest-automation/playwright-syntest/issues"
+  },
+  "homepage": "https://github.com/syntest-automation/playwright-syntest/blob/main/readme.md",
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown --no-stash"
+  },
   "author": "",
   "license": "ISC",
   "devDependencies": {
@@ -14,6 +45,10 @@
     "eslint": "^9.10.0",
     "eslint-plugin-react": "^7.35.2",
     "globals": "^15.9.0",
-    "typescript-eslint": "^8.4.0"
+    "lighthouse": "12.2.1",
+    "typescript-eslint": "^8.4.0",
+    "prettier": "3.3.3",
+    "husky": "9.1.5",
+    "playwright-lighthouse": "4.0.0"
   }
 }

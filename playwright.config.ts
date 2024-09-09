@@ -9,6 +9,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 /**
  * See https://playwright.dev/docs/test-configuration.
+ * https://github.com/ksenecki/zwinnapanda-playwright
  */
 export default defineConfig({
   testDir: './tests',
